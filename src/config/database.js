@@ -1,4 +1,6 @@
-const knex = require('knex')({
+import knexLib from 'knex';
+
+const knex = knexLib({
   client: 'mysql2',
   connection: {
     host: process.env.DB_HOST || '127.0.0.1',
@@ -7,6 +9,6 @@ const knex = require('knex')({
     password: process.env.DB_PASSWORD || 'root',
     database: process.env.DB_NAME || 'db_escopo',
   },
-})
+});
 
-module.exports = knex
+export default knex;

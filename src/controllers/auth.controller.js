@@ -1,52 +1,44 @@
+import * as z from 'zod';
 import { cadastrar } from '../models/usuario.model.js';
 
-export async function cadastrarUsuario({ email, nome, senha }) {
-  try {
-    const dadosEstaoValidos = validarCadastro(email, nome, senha);
+const cadastroSchema = z.object({
+  nome: z.string().trim().min(1).max(100),
+  email: z.string().trim().min(6).max(150).toLowerCase().email(),
+  senha: z.string().trim().min(8).max(64),
+});
 
-    if (!dadosEstaoValidos) {
+export async function cadastrarUsuario(cadastroBody) {
+  try {
+    const resultadoValidacao = validarCadastro(
+      cadastroBody.email,
+      cadastroBody.nome,
+      cadastroBody.senha,
+    );
+
+    if (resultadoValidacao.erro) {
       return { mensagem: 'Dados inválidos' };
     }
-    const resultado = await cadastrar({ nome, email, senha });
 
-    if (!resultado) {
+    const { email, nome, senha } = resultadoValidacao.dados;
+
+    const resultadoModel = await cadastrar({ email, nome, senha });
+
+    if (!resultadoModel) {
       return { mensagem: 'Erro na model' };
     }
 
-    return resultado;
+    return resultadoModel;
   } catch (error) {
     return { mensagem: 'Erro na controller' };
   }
 }
 
 function validarCadastro(email, nome, senha) {
-  if (
-    typeof nome !== 'string' ||
-    typeof email !== 'string' ||
-    typeof senha !== 'string'
-  ) {
-    return false;
+  const validacao = cadastroSchema.safeParse({ email, nome, senha });
+
+  if (!validacao.success) {
+    return { erro: true, detalhes: validacao.error };
   }
 
-  const nomeFormatado = nome.trim();
-  const emailFormatado = email.trim();
-  const senhaFormatado = senha.trim();
-
-  if (nomeFormatado.length === 0 || nomeFormatado.length > 100) {
-    return false;
-  }
-
-  if (
-    emailFormatado.length === 0 ||
-    emailFormatado.length > 150 ||
-    !emailFormatado.includes('@')
-  ) {
-    return false;
-  }
-
-  if (senhaFormatado.length === 0 || senhaFormatado.length > 255) {
-    return false;
-  }
-
-  return true;
+  return { erro: false, dados: validacao.data };
 }

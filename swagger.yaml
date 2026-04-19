@@ -413,7 +413,7 @@ paths:
                   type: string
                   example: nathan@email.com
                   maxLength: 150
-                  minLength: 3
+                  minLength: 6
                 senha:
                   type: string
                   example: 12345678
@@ -476,7 +476,7 @@ paths:
                   type: string
                   example: nathan@email.com
                   maxLength: 150
-                  minLength: 3
+                  minLength: 6
                 senha:
                   type: string
                   example: 123456

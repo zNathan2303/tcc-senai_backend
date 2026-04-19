@@ -6,11 +6,9 @@ const router = Router();
 router.post('/cadastrar', async (req, res) => {
   const { nome, email, senha } = req.body;
 
-  const resultado = await cadastrarUsuario({ email, nome, senha });
+  const resultadoController = await cadastrarUsuario({ email, nome, senha });
 
-  console.log(resultado);
-
-  res.status(200).json(resultado);
+  res.status(200).json(resultadoController);
 });
 
 export default router;

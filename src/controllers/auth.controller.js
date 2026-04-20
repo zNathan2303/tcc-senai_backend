@@ -1,6 +1,11 @@
 import * as z from 'zod';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { cadastrar, obterPorEmail } from '../models/usuario.model.js';
-import { ERRO_INTERNO_DO_SERVIDOR } from '../messages/erros.js';
+import {
+  EMAIL_OU_SENHA_INCORRETOS,
+  ERRO_INTERNO_DO_SERVIDOR,
+} from '../messages/erros.js';
 import { formatarErrosZod } from '../utils/formatacoes.js';
 
 const campoEmail = z
@@ -36,7 +41,10 @@ export async function cadastrarUsuario(cadastroBody) {
   try {
     const { email, nome, senha } = cadastroSchema.parse(cadastroBody);
 
-    const id = await cadastrar({ email, nome, senha });
+    const salt = 10;
+    const senhaHash = await bcrypt.hash(senha, salt);
+
+    const id = await cadastrar(email, nome, senhaHash);
 
     return {
       id,
@@ -72,17 +80,23 @@ export async function logarUsuario(loginBody) {
     const { email, senha } = loginSchema.parse(loginBody);
 
     const usuario = await obterPorEmail(email);
-
-    if (!usuario || senha !== usuario.senha) {
-      return {
-        erro: true,
-        codigo: 401,
-        status: 'Unauthorized',
-        mensagem: 'E-mail ou senha incorretos',
-      };
+    if (!usuario) {
+      return EMAIL_OU_SENHA_INCORRETOS;
     }
 
-    const token = usuario.senha;
+    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+    if (!senhaValida) {
+      return EMAIL_OU_SENHA_INCORRETOS;
+    }
+
+    const payload = {
+      id: usuario.id,
+      email: usuario.email,
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: '7d',
+    });
 
     return {
       token,

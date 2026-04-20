@@ -3,7 +3,7 @@ import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import router from './src/routes/index.js';
-import { verificarSeRequestBodyEJSON } from './src/middlewares/request-body-json.js';
+import { verificarSeRequestBodyEValido } from './src/middlewares/request-body.js';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -23,9 +23,9 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/v1', router);
 
 // Middlewares de erro
-app.use(verificarSeRequestBodyEJSON);
+app.use(verificarSeRequestBodyEValido);
 
 app.listen(PORT, () => {
   console.log(`Aguardando requisições na porta: ${PORT}`);
-  console.log('Swagger na rota: /api/docs');
+  console.log('Swagger local na rota: http://localhost:8080/api/docs');
 });

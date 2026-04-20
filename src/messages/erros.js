@@ -1,4 +1,5 @@
 export const ERRO_INTERNO_DO_SERVIDOR = {
+  erro: true,
   codigo: 500,
   status: 'Internal Server Error',
   mensagem: 'Erro Interno no Servidor',

@@ -472,7 +472,7 @@ paths:
                   minLength: 6
                 senha:
                   type: string
-                  example: 123456
+                  example: 12345678
                   maxLength: 64
                   minLength: 8
 

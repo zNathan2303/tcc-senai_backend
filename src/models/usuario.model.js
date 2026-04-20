@@ -5,3 +5,11 @@ export async function cadastrar({ email, nome, senha }) {
 
   return id;
 }
+
+export async function obterPorEmail(email) {
+  const [usuario] = await knex('usuario')
+    .where({ email })
+    .select('id', 'nome', 'email', 'senha');
+
+  return usuario;
+}

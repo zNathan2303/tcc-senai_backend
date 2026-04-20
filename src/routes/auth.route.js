@@ -4,11 +4,16 @@ import { cadastrarUsuario } from '../controllers/auth.controller.js';
 const router = Router();
 
 router.post('/cadastrar', async (req, res) => {
-  const { nome, email, senha } = req.body;
+  const resultado = await cadastrarUsuario(req.body);
 
-  const resultadoController = await cadastrarUsuario({ email, nome, senha });
+  if (resultado.codigo) {
+    resultado.rota = req.originalUrl;
+    resultado.data_hora = new Date().toLocaleString('pt-BR');
+  }
 
-  res.status(200).json(resultadoController);
+  const codigo = resultado.codigo || 201;
+
+  return res.status(codigo).json(resultado);
 });
 
 export default router;

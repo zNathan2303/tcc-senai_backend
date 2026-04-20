@@ -428,15 +428,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Usuario'
 
-        '409':
-          description: Usuário já existe
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Erro'
-
         '400':
-          description: Requisição mal formulada
+          description: Requisição mal formulada ou usuário com o e-mail informado já existente
           content:
             application/json:
               schema:

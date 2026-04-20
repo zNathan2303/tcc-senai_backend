@@ -1,44 +1,59 @@
 import * as z from 'zod';
 import { cadastrar } from '../models/usuario.model.js';
+import { ERRO_INTERNO_DO_SERVIDOR } from '../messages/erros.js';
+import { formatarErrosZod } from '../utils/formatacoes.js';
 
 const cadastroSchema = z.object({
-  nome: z.string().trim().min(1).max(100),
-  email: z.string().trim().min(6).max(150).toLowerCase().email(),
-  senha: z.string().trim().min(8).max(64),
+  nome: z
+    .string('Deve ser uma String')
+    .trim()
+    .min(1, 'Mínimo 1 caractere')
+    .max(100, 'Máximo 100 caracteres'),
+  email: z
+    .string('Deve ser uma String')
+    .trim()
+    .min(6, 'Mínimo 6 caracteres')
+    .max(150, 'Máximo 150 caracteres')
+    .toLowerCase()
+    .email('Deve ser um e-mail válido'),
+  senha: z
+    .string('Deve ser uma String')
+    .trim()
+    .min(8, 'Mínimo 8 caracteres')
+    .max(64, 'Máximo 64 caracteres'),
 });
 
 export async function cadastrarUsuario(cadastroBody) {
   try {
-    const resultadoValidacao = validarCadastro(
-      cadastroBody.email,
-      cadastroBody.nome,
-      cadastroBody.senha,
-    );
+    const { email, nome, senha } = cadastroSchema.parse(cadastroBody);
 
-    if (resultadoValidacao.erro) {
-      return { mensagem: 'Dados inválidos' };
-    }
+    const id = await cadastrar({ email, nome, senha });
 
-    const { email, nome, senha } = resultadoValidacao.dados;
-
-    const resultadoModel = await cadastrar({ email, nome, senha });
-
-    if (!resultadoModel) {
-      return { mensagem: 'Erro na model' };
-    }
-
-    return resultadoModel;
+    return {
+      id,
+      nome,
+      email,
+    };
   } catch (error) {
-    return { mensagem: 'Erro na controller' };
+    // Erro do Zod
+    if (error instanceof z.ZodError) {
+      return {
+        codigo: 422,
+        status: 'Unprocessable Entity',
+        erros: formatarErrosZod(error.issues),
+      };
+    }
+
+    /* ERROS DO BANCO */
+    // E-mail já existente na tabela usuario
+    if (error.code === 'ER_DUP_ENTRY') {
+      return {
+        codigo: 400,
+        status: 'Bad Request',
+        mensagem: 'Já existe um usuário com o e-mail informado',
+      };
+    }
+
+    return ERRO_INTERNO_DO_SERVIDOR;
   }
-}
-
-function validarCadastro(email, nome, senha) {
-  const validacao = cadastroSchema.safeParse({ email, nome, senha });
-
-  if (!validacao.success) {
-    return { erro: true, detalhes: validacao.error };
-  }
-
-  return { erro: false, dados: validacao.data };
 }

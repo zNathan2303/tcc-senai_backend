@@ -1,10 +1,9 @@
-export class ApiError extends Error {
+export default class ApiError extends Error {
   dataHora = new Date().toLocaleString('pt-BR');
 
-  constructor({ codigo = 500, mensagem = 'Erro Interno no Servidor', rota }) {
-    super();
+  constructor(mensagem = 'Erro Interno no Servidor', codigo = 500) {
+    super(mensagem);
     this.mensagem = mensagem;
     this.codigo = codigo;
-    this.rota = rota;
   }
 }

@@ -1,4 +1,6 @@
 import knex from '../config/database.js';
+import ApiError from '../errors/ApiError.js';
+import ConflictError from '../errors/ConflictError.js';
 
 export async function cadastrar(email, nome, senha) {
   try {
@@ -7,13 +9,12 @@ export async function cadastrar(email, nome, senha) {
     return id;
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
-      return {
-        erro: true,
-        codigo: 400,
-        status: 'Bad Request',
-        mensagem: 'Não é possível utilizar o e-mail informado para cadastro',
-      };
+      throw new ConflictError(
+        'Não é possível utilizar o e-mail informado para cadastro',
+      );
     }
+
+    throw new ApiError();
   }
 }
 

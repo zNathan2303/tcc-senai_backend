@@ -1,8 +1,8 @@
 import * as z from 'zod';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { cadastrar, obterPorEmail } from '../models/usuario.model.js';
-import { EMAIL_OU_SENHA_INCORRETOS } from '../messages/erros.js';
+import * as usuarioModel from '../models/usuario.model.js';
+import UnauthorizedError from '../errors/UnauthorizedError.js';
 
 const campoEmail = z
   .string('Deve ser uma String')
@@ -39,26 +39,22 @@ export async function cadastrarUsuario(cadastroBody) {
   const salt = 10;
   const senhaHash = await bcrypt.hash(senha, salt);
 
-  const id = await cadastrar(email, nome, senhaHash);
+  const id = await usuarioModel.cadastrar(email, nome, senhaHash);
 
-  return {
-    id,
-    nome,
-    email,
-  };
+  return { id, nome, email };
 }
 
 export async function logarUsuario(loginBody) {
   const { email, senha } = loginSchema.parse(loginBody);
 
-  const usuario = await obterPorEmail(email);
+  const usuario = await usuarioModel.obterPorEmail(email);
   if (!usuario) {
-    return EMAIL_OU_SENHA_INCORRETOS;
+    throw new UnauthorizedError('E-mail ou senha incorretos');
   }
 
   const senhaValida = await bcrypt.compare(senha, usuario.senha);
   if (!senhaValida) {
-    return EMAIL_OU_SENHA_INCORRETOS;
+    throw new UnauthorizedError('E-mail ou senha incorretos');
   }
 
   const payload = {

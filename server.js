@@ -3,9 +3,9 @@ import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import router from './src/routes/index.js';
-import { verificarSeRequestBodyEValido } from './src/middlewares/request-body.js';
+import { tratarRequestBodyInvalido } from './src/middlewares/request-body.js';
 import { globalErrorHandler } from './src/middlewares/global-error-handler.js';
-import { ZodValidationError } from './src/errors/ZodValidationError.js';
+import { zodErrorHandler } from './src/middlewares/zod-error.js';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -25,8 +25,8 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api/v1', router);
 
 // Middlewares de erro
-app.use(verificarSeRequestBodyEValido);
-app.use(ZodValidationError);
+app.use(tratarRequestBodyInvalido);
+app.use(zodErrorHandler);
 app.use(globalErrorHandler);
 
 app.listen(PORT, () => {

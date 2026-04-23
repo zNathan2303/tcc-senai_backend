@@ -29,3 +29,7 @@ export async function obterPorEmail(email) {
 export async function atualizarNome(id, nome) {
   await knex('usuario').where({ id }).update({ nome });
 }
+
+export async function desativarUsuario(id) {
+  await knex('usuario').where({ id }).update({ status: false });
+}

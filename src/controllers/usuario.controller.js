@@ -14,3 +14,7 @@ export async function atualizarNomeDoUsuario(usuario, requestBody) {
 
   await usuarioModel.atualizarNome(usuario.id, nome);
 }
+
+export async function desativarUsuario(usuario, requestBody) {
+  await usuarioModel.desativar(usuario.id);
+}

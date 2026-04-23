@@ -25,3 +25,7 @@ export async function obterPorEmail(email) {
 
   return usuario;
 }
+
+export async function atualizarNome(id, nome) {
+  await knex('usuario').where({ id }).update({ nome });
+}

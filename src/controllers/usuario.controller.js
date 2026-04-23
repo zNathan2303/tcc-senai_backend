@@ -18,3 +18,9 @@ export async function atualizarNomeDoUsuario(usuario, requestBody) {
 export async function desativarUsuario(usuario) {
   await usuarioModel.desativar(usuario.id);
 }
+
+export async function obter5UsuariosQueEmailContemValor(valor) {
+  const usuarios = await usuarioModel.obter5QueEmailContemValor(valor);
+
+  return usuarios;
+}

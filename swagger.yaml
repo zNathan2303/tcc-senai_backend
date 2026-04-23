@@ -611,12 +611,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Erro'
-        '404':
-          description: Usuário não encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Erro'
         '500':
           description: Erro interno do servidor
           content:
@@ -648,6 +642,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UsuarioList'
+        '400':
+          description: 'Parâmetro "email" não enviado, ou não atendendo aos critérios'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro'
         '401':
           description: Não autenticado
           content:

@@ -32,3 +32,13 @@ export async function atualizarNome(id, nome) {
 export async function desativar(id) {
   await knex('usuario').where({ id, status: true }).update({ status: false });
 }
+
+export async function obter5QueEmailContemValor(valor) {
+  const usuarios = await knex('usuario')
+    .where({ status: true })
+    .andWhereILike('email', `%${valor}%`)
+    .select('id', 'nome', 'email', 'foto_perfil')
+    .limit(5);
+
+  return usuarios;
+}

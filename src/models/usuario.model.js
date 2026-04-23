@@ -1,5 +1,4 @@
 import knex from '../config/database.js';
-import ApiError from '../errors/ApiError.js';
 import ConflictError from '../errors/ConflictError.js';
 
 export async function cadastrar(email, nome, senha) {
@@ -14,7 +13,7 @@ export async function cadastrar(email, nome, senha) {
       );
     }
 
-    throw new ApiError();
+    throw error;
   }
 }
 
@@ -30,6 +29,6 @@ export async function atualizarNome(id, nome) {
   await knex('usuario').where({ id }).update({ nome });
 }
 
-export async function desativarUsuario(id) {
-  await knex('usuario').where({ id }).update({ status: false });
+export async function desativar(id) {
+  await knex('usuario').where({ id, status: true }).update({ status: false });
 }

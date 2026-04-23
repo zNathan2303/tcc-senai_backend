@@ -17,6 +17,7 @@ router.patch(
 
 router.delete('/usuario', validarToken, async (req, res) => {
   await usuarioController.desativarUsuario(req.usuario);
+  res.sendStatus(204);
 });
 
 router.get('/usuarios', validarToken, async (req, res) => {});

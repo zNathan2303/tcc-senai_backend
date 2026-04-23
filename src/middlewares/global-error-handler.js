@@ -1,6 +1,10 @@
 import ApiError from '../errors/ApiError.js';
 
 export function globalErrorHandler(err, req, res, next) {
+  if (process.env.NODE_ENV !== 'production') {
+    console.error(err);
+  }
+
   if (err.codigo) {
     return res.status(err.codigo).json({
       codigo: err.codigo,

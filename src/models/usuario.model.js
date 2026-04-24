@@ -17,28 +17,26 @@ export async function cadastrar(email, nome, senha) {
   }
 }
 
-export async function obterPorEmail(email) {
+export async function obterComSenhaPorEmail(email) {
   const [usuario] = await knex('usuario')
-    .where({ email })
+    .where({ email, status: true })
     .select('id', 'nome', 'email', 'senha');
 
   return usuario;
 }
 
 export async function atualizarNome(id, nome) {
-  await knex('usuario').where({ id }).update({ nome });
+  await knex('usuario').where({ id, status: true }).update({ nome });
 }
 
 export async function desativar(id) {
   await knex('usuario').where({ id, status: true }).update({ status: false });
 }
 
-export async function obter5QueEmailContemValor(valor) {
-  const usuarios = await knex('usuario')
-    .where({ status: true })
-    .andWhereILike('email', `%${valor}%`)
-    .select('id', 'nome', 'email', 'foto_perfil')
-    .limit(5);
+export async function obterPorEmail(email) {
+  const [usuario] = await knex('usuario')
+    .where({ email, status: true })
+    .select('id', 'nome', 'email', 'foto_perfil');
 
-  return usuarios;
+  return usuario;
 }

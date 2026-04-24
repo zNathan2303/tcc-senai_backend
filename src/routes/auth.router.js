@@ -4,12 +4,12 @@ import { verificarSeRequestTemBody } from '../middlewares/request-body.js';
 
 const router = Router();
 
-router.post('/cadastrar', verificarSeRequestTemBody, async (req, res) => {
+router.post('/auth/cadastrar', verificarSeRequestTemBody, async (req, res) => {
   const resultado = await authController.cadastrarUsuario(req.body);
   return res.status(201).json(resultado);
 });
 
-router.post('/login', verificarSeRequestTemBody, async (req, res) => {
+router.post('/auth/login', verificarSeRequestTemBody, async (req, res) => {
   const resultado = await authController.logarUsuario(req.body);
   return res.status(200).json(resultado);
 });

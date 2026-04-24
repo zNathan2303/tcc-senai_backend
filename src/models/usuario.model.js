@@ -1,5 +1,4 @@
 import knex from '../config/database.js';
-import ApiError from '../errors/ApiError.js';
 import ConflictError from '../errors/ConflictError.js';
 
 export async function cadastrar(email, nome, senha) {
@@ -14,14 +13,30 @@ export async function cadastrar(email, nome, senha) {
       );
     }
 
-    throw new ApiError();
+    throw error;
   }
+}
+
+export async function obterComSenhaPorEmail(email) {
+  const [usuario] = await knex('usuario')
+    .where({ email, status: true })
+    .select('id', 'nome', 'email', 'senha');
+
+  return usuario;
+}
+
+export async function atualizarNome(id, nome) {
+  await knex('usuario').where({ id, status: true }).update({ nome });
+}
+
+export async function desativar(id) {
+  await knex('usuario').where({ id, status: true }).update({ status: false });
 }
 
 export async function obterPorEmail(email) {
   const [usuario] = await knex('usuario')
-    .where({ email })
-    .select('id', 'nome', 'email', 'senha');
+    .where({ email, status: true })
+    .select('id', 'nome', 'email', 'foto_perfil');
 
   return usuario;
 }

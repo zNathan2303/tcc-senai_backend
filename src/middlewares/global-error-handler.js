@@ -10,6 +10,10 @@ export function globalErrorHandler(err, req, res, next) {
     });
   }
 
+  if (process.env.NODE_ENV !== 'production') {
+    console.error(err);
+  }
+
   const serverError = new ApiError();
   return res.status(serverError.codigo).json({
     codigo: serverError.codigo,

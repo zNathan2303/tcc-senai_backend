@@ -611,45 +611,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Erro'
-        '404':
-          description: Usuário não encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Erro'
         '500':
           description: Erro interno do servidor
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Erro'
-  /api/v1/usuarios:
+  /api/v1/usuario/email/{email}:
     get:
       tags:
         - Usuário
-      summary: Lista 5 usuários que contenham em alguma parte do email a query
+      summary: Busca um usuário pelo email
       security:
         - bearerAuth: []
       parameters:
         - name: email
-          in: query
+          in: path
           required: true
           schema:
             type: string
-            minLength: 3
+            minLength: 6
             maxLength: 150
-          description: Filtrar usuários que contenham no email esse conteúdo
+          description: Email do usuário a ser buscado
       responses:
         '200':
-          description: Lista de usuários retornada
+          description: Usuário encontrado
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UsuarioList'
+                $ref: '#/components/schemas/UsuarioList'
         '401':
           description: Não autenticado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Erro'
+        '404':
+          description: Usuário não encontrado
           content:
             application/json:
               schema:

@@ -47,7 +47,7 @@ export async function cadastrarUsuario(cadastroBody) {
 export async function logarUsuario(loginBody) {
   const { email, senha } = loginSchema.parse(loginBody);
 
-  const usuario = await usuarioModel.obterPorEmail(email);
+  const usuario = await usuarioModel.obterComSenhaPorEmail(email);
   if (!usuario) {
     throw new UnauthorizedError('E-mail ou senha incorretos');
   }
